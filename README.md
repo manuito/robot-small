@@ -23,4 +23,6 @@ I will maybe publish more details on this and the problem I got, as I'm still lo
 
 To add a new firmeware, you need to "link pin 1 to 6 in J8 connector". J8 connector is in fact the ISP port (similar to an arduino ICSP). It's not labeled, nore documented anywhere, so I created this diag with pin details : 
 
+![PIN diagram](xprotolab%20plain%20io.png?raw=true "PIN diagram")
+
 Don't know yet if it's OK, If so I will try to go further in firmware flashing (using Atmel Studio 6 / Atmel FLIP or whatever else I can find)

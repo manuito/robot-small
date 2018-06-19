@@ -21,8 +21,8 @@ To do my testing, for the first time I wanted to go further in prototyping. So I
 
 I will maybe publish more details on this and the problem I got, as I'm still looking on a way to fix it. I don't think I have fried something (was working on a ESP8266 output) but it's possible that the firmware transformed into vaporware. 
 
-To add a new firmeware, you need to "link pin 1 to 6 in J8 connector". J8 connector is in fact the ISP port (similar to an arduino ICSP). It's not labeled, nore documented anywhere, so I created this diag with pin details : 
+To add a new firmeware, you need to "link pin 1 to 6 in J8 connector". J8 connector is an external port, not soldered. It's not labeled, nore documented anywhere (and it's NOT the PDI port neither - I did mixed them first!), so I created this diag with pin details : 
 
-![PIN diagram](xprotolab%20plain%20io.png?raw=true "PIN diagram")
+![PIN diagram](xprotolab%20plain%20io%20-%20fix.png?raw=true "PIN diagram")
 
 Don't know yet if it's OK, If so I will try to go further in firmware flashing (using Atmel Studio 6 / Atmel FLIP or whatever else I can find)

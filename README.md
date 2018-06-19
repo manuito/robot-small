@@ -17,12 +17,18 @@ For MCU, it's also simpler : ESP8266 with NodeMCU. Plus a pololu "2 motors drive
 Programmed with Arduino. Not started yet
 
 ## Testing
-To do my testing, for the first time I wanted to go further in prototyping. So I started to use a Xprotolab Plain (http://www.gabotronics.com/oscilloscopes/xprotolab-plain.htm). I don't think a less expensive "oscilloscope" could exist, and it seems very promising... until it stoped to work :'(
 
-I will maybe publish more details on this and the problem I got, as I'm still looking on a way to fix it. I don't think I have fried something (was working on a ESP8266 output) but it's possible that the firmware transformed into vaporware. 
+### Use and fix of the Xprotolab plain oscilloscope 
 
-To add a new firmeware, you need to "link pin 1 to 6 in J8 connector". J8 connector is an external port, not soldered. It's not labeled, nore documented anywhere (and it's NOT the PDI port neither - I did mixed them first!), so I created this diag with pin details : 
+To do my testing, for the first time I wanted to go further in prototyping. So I started to use a **Xprotolab Plain** (http://www.gabotronics.com/oscilloscopes/xprotolab-plain.htm). I don't think a less expensive "*oscilloscope*" could exist, and it seems very promising... until it stoped to work :'( 
+
+It did crash when processing a logic protocol identification, and was "bricked" after that : no more green light, impossible to make it available on computer as usb device.
+
+After many check on documentation, I finally find a way to fix it : as explained on Gabotronics site, the bootloader is never droped, **you just have to reset the firmware to make everything back to normal**.
+
+To add / upgrade the firmeware, you first need to "link pin 1 to 6 in J8 connector" but what is the "J8 connector" is not clear. So I have made deep searchs, and finally identified this PIN Diagram : 
 
 ![PIN diagram](xprotolab%20plain%20io%20-%20fix.png?raw=true "PIN diagram")
 
-Don't know yet if it's OK, If so I will try to go further in firmware flashing (using Atmel Studio 6 / Atmel FLIP or whatever else I can find)
+So yes you have to solder a connector to the 6 soldering points next to the MCU, and then link together the 1st and 6th pins on it before inserting USB. Once connected to computer, you will see a blinking red light : remove the wire from PIN 1 / 6, and start to follow documentation manual about how to upgrade firmeware. As the Atmel website is gone, you have to search into archive.org for the FLIP tool (https://web.archive.org/web/20150929050646if_/http://www.atmel.com/images/JRE%20-%20Flip%20Installer%20-%203.4.7.112.exe) Once restarted everything is back to normal, and this fun little device is ready to go :-)
+

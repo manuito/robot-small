@@ -56,6 +56,12 @@ void handleAction() {
     turnRight(10 * (action -48));
   }
   
+  if (server.hasArg("BR")) {
+    char action = server.arg("BR").charAt(0);
+    Serial.println("Barrel roll");
+    doABarrelRoll();
+  }
+  
   server.send(200, "application/json", "{ result:'ACK' }");
 }
 

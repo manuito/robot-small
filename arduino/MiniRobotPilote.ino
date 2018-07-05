@@ -55,15 +55,9 @@ void setup() {
   pinMode(LED_STARTED, OUTPUT);
   digitalWrite(LED_STARTED, HIGH);   // turn the LED on (HIGH is the voltage level)
 
-  setBandAction('2');
-
-  goStraight(true, 1);
-
-  delay(1000);
-  
   goStraight(true, 0);
- 
   setupWifi();
+  setBandAction('2');
   Serial.println("started");
 }
 

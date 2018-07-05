@@ -27,6 +27,23 @@ void turnRight(uint8_t speed){
   driveRight(true, speed);
 }
 
+void doABarrelRoll(){
+  driveLeft(false, 2);
+  driveRight(false, 1);
+  delay(actionDelay);
+  driveLeft(true, 1);
+  driveRight(false, 3);
+  delay(actionDelay);
+  goStraight(true, 1);
+  delay(actionDelay);
+  goStraight(false, 1);
+  delay(actionDelay);
+  driveLeft(true, 2);
+  driveRight(true, 1);
+  delay(actionDelay);
+  goStraight(true, 0);
+}
+
 /**
  * Internal commands
  */

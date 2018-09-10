@@ -84,7 +84,7 @@ A very basic webserver is used for piloting features. The code organization and 
 
 ### Camera
 
-Camera code is included but not yet used. Copied from another old project on Arduino Mega.
+Camera code is included but not yet used. Copied from another old project on Arduino Mega. Will be droped : Serial Camera is painfull to use and not powerfull. I prefer to invest on an other solution for futur robot projects, for example based on openCV with Raspberry camera. 
 
 ### NeoPixels
 
@@ -92,7 +92,34 @@ Robot-large is driven with an Arduino Mega 2560 MCU board + a Raspberry Pi W. He
 
 ### Remote
 
-I use my Wifi Pilote remote for driving the robot (see [Project here](https://github.com/manuito/wifi-pilote))
+I use my Wifi Pilote remote for driving the robot (see [Project here](https://github.com/manuito/wifi-pilote)). **It works**
+
+## Options
+
+I'm currently (september 2018) trying something new with this already working robot : I'm creating a new "option" using the serial port I added into the robot. This port wasn't used yet and I didn't what I will do with that. I made it 5V compliant (thanks to the free io from the level shifter) and I have imaginated something : A Arduino Nano based extension board for the robot.
+
+### The extension board
+
+This board is based on :
+* An Arduino Nano clone (costs something like 2.5 € on aliexpress)
+* 1 HC-SR04 (cheap ultrasonic distance sensor - less than 1 €)
+* 1 passive buzzer (0 €? - found from a cheap kit)
+* (maybe) 1 cheap 3 axis I2C GY521 sensor (less than 1 €)
+* 1 integrated SG90 microServo (1 €) 
+
+All merged together in 2 customized perma proto boards (1 "fix", 1 "moving"). The idea is to have the HC-SR04 rotating on 120° for basic distance scanning (and for kids fun), fixed on a larger board glued to some lego bricks. This extension can be then linked through serial port (which provides also power) and just fixed with legos.
+
+I'm currently still working on this board.
+
+### Power management
+
+I'm pretty sure I should have problems with power but for now, it seems ok... The serial 5v in the robot is directly provided by the polulu bulk step up / step down converter, which can provides max 1A. Motors voltage is direct battery output, so the power converter has to manage the NeoPixel band (8 leds) + 1 D1 Mini with Wifi service On + 1 Nano + 1 SG90 Servo (which is driven directly from the nano) + 1 Buzzer + 1 HC-SR04 + 2 Leds + 1 GY521. I will see what will happen ... (I'm still new in the electronic world, I haven't "burned" anything yet so ...)
+
+### Code 
+
+I have started the code for the extension Nano. It will communicate over serial with D1 Mini board (Software Serial for Nano, Serial for ESP8266). It will use a simplified "monitoring" data flow similar to the one used in my "big" large-robot project. Driving of sensors will be handled by the nano, the ESP8266 will simply send basic commands and receive real time sensor flow. 
+
+Then I will try to create an "auto-pilote" mode for the ESP8266 (basic obstacle avoidance and multi step programming). And I expect to be able to add some feedback to the wifi remote : maybe it will even be more "visual" like a "radar" view based on the HC-SR04 data flow (with a very low FPS rate).
 
 ## Testing
 

@@ -87,6 +87,24 @@ Robot-large is driven with an Arduino Mega 2560 MCU board + a Raspberry Pi W. He
 
 I use my Wifi Pilote remote for driving the robot (see [Project here](https://github.com/manuito/wifi-pilote))
 
+## The option
+
+I'm adding a sub module named "option" : it's a permaproto with :
+
+* A HC-SR04 sensor fixed on a Servo
+* A cheap giroscope
+* An active buzzer
+
+Driven with a arduino nano, which "talk" with the small-robot ESP8266 through the included 5V Serial line. It will be glued to lego blocks for easy addition to the robot base.
+
+Work in progress : 
+
+![Option](docs/option.jpg?raw=true "Option")
+
+I want to make it "almost" plug'n play : the robot detect at startup if the option is their, and then enable it. With option the robot can now move autonomously (thanks to the rotating HS Sensor and the giroscope). It can also beep when it's angry
+
+The code for the arduino nano is in the sub folder ``arduino/option``
+
 ## Testing
 
 ### Use and fix of the Xprotolab plain oscilloscope 

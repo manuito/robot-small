@@ -4,65 +4,75 @@ ESP8266WebServer server ( 80 );
 const char* WEB_PAGE = "<html>\
   <head>\
     <meta http-equiv='refresh' content='5'/>\
-    <title>ESP8266 Demo</title>\
+    <title>MiniRobotPilote home</title>\
     <style>\
       body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; Color: #000088; }\
     </style>\
   </head>\
   <body>\
-    <h1>Hello from ESP8266!</h1>\
+    <h1>Hello from MiniRobot!</h1>\
     <p>Uptime: %02d:%02d:%02d</p>\
-    <img src=\"/capture.jpg\" />\
+    <p><h3>Commands:</h3><ul><li><a href=\"/status\">See status</a></li>\
+    <li><a href=\"/action?L=1\">Use actions</a></li>\
+    <li><a href=\"/action?OP=2\">Set option</a></li></ul></p>\
   </body>\
 </html>";
 
 
+// Status action - specific response
+void handleStatus() {
 
-// actions
+  String optRes = isOptionDetected() ? "true" : "false";
+  
+  server.send(200, "application/json", "{\"option\":" + optRes + ",\"leftSpeed\":" + leftSpeed + ",\"rightSpeed\":" + rightSpeed + "}");
+}
+
+// Standard actions - standard result
 void handleAction() {
 
+  String result = "ACK";
+  
   if (server.hasArg("L")) {
     char action = server.arg("L").charAt(0);
-    Serial.print("Light change : ");
-    Serial.println(action);
     setBandAction(action);
   }
-
+  
   if (server.hasArg("G")) {
     char action = server.arg("G").charAt(0);
-    Serial.print("Go ");
-    Serial.println(action);
     goStraight(true, 100 * (action -48));
   }
-  
+    
   if (server.hasArg("B")) {
     char action = server.arg("B").charAt(0);
-    Serial.print("Backward ");
-    Serial.println(action);
     goStraight(false, 100 * (action -48));
   }
-
+  
   if (server.hasArg("TL")) {
     char action = server.arg("TL").charAt(0);
-    Serial.print("Turn left ");
-    Serial.println(action);
     turnLeft( 10 * (action -48));
   }
-  
+    
   if (server.hasArg("TR")) {
     char action = server.arg("TR").charAt(0);
-    Serial.print("Turn right ");
-    Serial.println(action);
     turnRight(10 * (action -48));
   }
-  
+    
   if (server.hasArg("BR")) {
     char action = server.arg("BR").charAt(0);
-    Serial.println("Barrel roll");
     doABarrelRoll();
   }
-  
-  server.send(200, "application/json", "{ result:'ACK' }");
+    
+  if (server.hasArg("OP")) {
+    char action = server.arg("OP").charAt(0);
+    doOptionAction(action);
+  }
+    
+  if (server.hasArg("DI")) {
+    doOptionAction('3');
+    result = optionDistance;
+  }
+    
+  server.send(200, "application/json", "{ \"result\":\"" + result + "\" }");
 }
 
 void handleRoot() {
@@ -97,40 +107,26 @@ void handleNotFound() {
 void setupWifi () {
   WiFi.mode ( WIFI_STA );
   WiFi.begin ( ssid, password );
-//  Serial.println ( "" );
 
   // Wait for connection
   while ( WiFi.status() != WL_CONNECTED ) {
     delay ( 500 );
-    Serial.print ( "." );
   }
 
   localIp = WiFi.localIP() ;
 
-  Serial.println ( "" );
-  Serial.print ( "Connected to " );
-  Serial.println ( ssid );
-  Serial.print ( "IP address: " );
-  Serial.println ( localIp );
-
   if ( MDNS.begin ( "esp8266" ) ) {
- //   Serial.println ( "MDNS responder started" );
   }
 
   server.on ( "/", handleRoot );
-  server.on ( "/inline", []() {
-    server.send ( 200, "text/plain", "this works as well" );
-  } );
   server.on ( "/action", handleAction );
+  server.on ( "/status", handleStatus );
   server.onNotFound ( handleNotFound );
   server.begin();
-//  Serial.println ( "HTTP server started" );
 }
 
 void loopWifi () {
   server.handleClient();
 }
 
-//void drawCapture() {
-//  server.send ( 200, "image/jpg", loadPreview());
-//}
+

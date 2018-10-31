@@ -31,8 +31,8 @@ const byte cameraAddr = (CAM_ADDR << 5);  // addr
 unsigned long picTotalLen = 0;            // picture length
 
 // Wifi params
-const char *ssid = XXXXX;
-const char *password = xxxxxx;
+const char *ssid = "****";
+const char *password = "****";
 
 // Active Wifi IP
 IPAddress localIp;
@@ -43,6 +43,8 @@ int shortestDelay = 100;
 
 // And loop control
 int actionStep = 0;
+
+boolean optionUp = false;
 
 void setup() {  
 
@@ -57,8 +59,18 @@ void setup() {
 
   goStraight(true, 0);
   setupWifi();
+  
+  checkOptionDetected();
+
+  if(isOptionDetected()){
+    optionUp = true;
+    delay(1000);
+    startOption();
+  }
+  
+  digitalWrite(LED_STARTED, HIGH);
+  
   setBandAction('2');
-  Serial.println("started");
 }
 
 void loop() {

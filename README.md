@@ -13,9 +13,12 @@ The base kit is once again a (very good) pololu one : Zumo (https://www.pololu.c
 The feature are limited :
 * Driving (Track 2WD)
 * Light (1 RGB Band with 8 NeoPixels)
+
 And that's it ! Enough for "rc like" fun for kids, easy to program. I expect to glue so lego on it to make it possible to build anything they want over it. It will not be fast but OK.
 
-For MCU, it's also simpler : ESP8266 with D1 Mini. Plus a pololu "2 motors driver", 1 pololu 5v regulator (even if ESP8266 is 3.3V, it's easier to manage a 5V input in combined electronic plateform like a robot, and the NodeMCU includes a 3.3V regulator itself. 
+For MCU, it's also simpler : ESP8266 with D1 Mini. Plus a pololu "2 motors driver", 1 pololu 5v regulator (even if ESP8266 is 3.3V, it's easier to manage a 5V input in combined electronic plateform like a robot, and the D1 mini includes a 3.3V regulator itself. 
+
+I will use a Proto PCB. I hope to start to create custom PCB for my next projects, as using this kind of (cheap) proto board is not fun and it make you loose a lot of space ... And I hope to be able to buy also a better solder iron : mine is a cheap one, and it's already almost dead :'(
 
 ### Lego base
 
@@ -29,20 +32,20 @@ I was not able to have everything under one lego brick of height. I had to add b
 
 ### Support for extension
 
-A 5v compliant Serial port is available through a groove connector. The idea is to program and add later a Serial Camera Kit, and make the robot able to take pictures (and maybe to display a low FPS real time rendering of what it is able to see)
+A 5v compliant Serial port is available through a groove connector. The idea is to program and add later a Serial Camera Kit, and make the robot able to take pictures (and maybe to display a low FPS real time rendering of what it is able to see). Integration was a bit complicated with the small space and the fact I used a proto board for support (so with many wires to link everything together), but result is OK.
 
 ### Power management
 
 Various power are managed :
-* VIN => The bateries direct output. Can be from 4 x 0.9 v (empty NiCad bateries) to 4 * 1.5 v (new AA bateries).
+* VIN => The bateries direct output. Can be somewhere between 4 x 0.9 v (empty NiCad bateries) and 4 * 1.5 v (new AA bateries).
 * VCC 5V => VIN regulated by a pololu step-up step-down board.
 * VCC 3.3V => D1 Mini (ESP8266) operating voltage + IO level. Provided by the D1 Mini regulator
 
-Available power is different on each source : VIN has max power (whatever the batteries can handle), 5V is from 0.500A to 1A. Most of the time it will be somewhere between 0.500 and 0.700A. 3.3v is very weak : arround 200mA
+Available power is different on each source : VIN has max power (whatever the batteries can handle), 5V is from 0.500A to 1A. Most of the time it will be somewhere between 0.500 and 0.700A. 3.3v is very weak : arround 200mA (provided by D1 Mini board)
 
 How it is distributed :
 * VIN provided to regulator + Motor VIN in the motor driver
-* VCC 5V provided to D1 Mini VIN + a Level shifter V High + The RGB Band VIN
+* VCC 5V provided by regulator to D1 Mini VIN + a Level shifter V High + The RGB Band VIN + Serial port VCC
 * VCC 3.3V is provided by the D1 Mini to the level shifter low V and to the motor driver input voltage IN 
 
 ### Use of the level shifter
@@ -57,9 +60,13 @@ I should add 330 resistances before the status led, but what I have seen is that
 
 For the RGB Band, a resistance is recommanded to lower the power of input. As it is provided by a level shifter (so power is high), it is good to add one. Adafruit recommands a ~ 400 ohms resistance.
 
+### Noise reduction in motors.
+
+I added 2 ceramic capacitor between V+/V- of motors. See [this good article from Pololu site](https://www.pololu.com/docs/0J15/9)
+
 ### Front 
 
-In front of the robot : the 8 NeoPixel band + a power switch. A status led is also hidden behind one hole in brick.
+In front of the robot : the 8 NeoPixel band + a power switch. A status led is also hidden behind one hole in brick. RGBBand + status led are Fixed through a band of protoboard and then fixed with 2 screws. The power switch is glued to robot base.
 
 ![Front](docs/front.png?raw=true "Front")
 
@@ -77,7 +84,7 @@ A very basic webserver is used for piloting features. The code organization and 
 
 ### Camera
 
-Camera code is included but not yet used. Copied from another old project on Arduino Mega.
+Camera code is included but not yet used. Copied from another old project on Arduino Mega. Will be droped : Serial Camera is painfull to use and not powerfull. I prefer to invest on an other solution for futur robot projects, for example based on openCV with Raspberry camera. 
 
 ### NeoPixels
 
@@ -85,7 +92,34 @@ Robot-large is driven with an Arduino Mega 2560 MCU board + a Raspberry Pi W. He
 
 ### Remote
 
-I use my Wifi Pilote remote for driving the robot (see [Project here](https://github.com/manuito/wifi-pilote))
+I use my Wifi Pilote remote for driving the robot (see [Project here](https://github.com/manuito/wifi-pilote)). **It works**
+
+## Options
+
+I'm currently (september 2018) trying something new with this already working robot : I'm creating a new "option" using the serial port I added into the robot. This port wasn't used yet and I didn't what I will do with that. I made it 5V compliant (thanks to the free io from the level shifter) and I have imaginated something : A Arduino Nano based extension board for the robot.
+
+### The extension board
+
+This board is based on :
+* An Arduino Nano clone (costs something like 2.5 € on aliexpress)
+* 1 HC-SR04 (cheap ultrasonic distance sensor - less than 1 €)
+* 1 passive buzzer (0 €? - found from a cheap kit)
+* (maybe) 1 cheap 3 axis I2C GY521 sensor (less than 1 €)
+* 1 integrated SG90 microServo (1 €) 
+
+All merged together in 2 customized perma proto boards (1 "fix", 1 "moving"). The idea is to have the HC-SR04 rotating on 120° for basic distance scanning (and for kids fun), fixed on a larger board glued to some lego bricks. This extension can be then linked through serial port (which provides also power) and just fixed with legos.
+
+I'm currently still working on this board.
+
+### Power management
+
+I'm pretty sure I should have problems with power but for now, it seems ok... The serial 5v in the robot is directly provided by the polulu bulk step up / step down converter, which can provides max 1A. Motors voltage is direct battery output, so the power converter has to manage the NeoPixel band (8 leds) + 1 D1 Mini with Wifi service On + 1 Nano + 1 SG90 Servo (which is driven directly from the nano) + 1 Buzzer + 1 HC-SR04 + 2 Leds + 1 GY521. I will see what will happen ... (I'm still new in the electronic world, I haven't "burned" anything yet so ...)
+
+### Code 
+
+I have started the code for the extension Nano. It will communicate over serial with D1 Mini board (Software Serial for Nano, Serial for ESP8266). It will use a simplified "monitoring" data flow similar to the one used in my "big" large-robot project. Driving of sensors will be handled by the nano, the ESP8266 will simply send basic commands and receive real time sensor flow. 
+
+Then I will try to create an "auto-pilote" mode for the ESP8266 (basic obstacle avoidance and multi step programming). And I expect to be able to add some feedback to the wifi remote : maybe it will even be more "visual" like a "radar" view based on the HC-SR04 data flow (with a very low FPS rate).
 
 ## The option
 
